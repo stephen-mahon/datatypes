@@ -17,25 +17,76 @@ type Identifiable interface {
 	ID() string
 }
 
-type Person struct {
-	firstName      string
-	lastName       string
-	twitterHandler TwitterHandler
+type Citizen interface {
+	Identifiable
+	Country() string
 }
 
-func NewPerson(firstName, lastName string) Person {
-	return Person{
-		firstName: firstName,
-		lastName:  lastName,
+type socialSecurityNumber string
+
+func NewSocialSecurityNumber(value string) Citizen {
+	return socialSecurityNumber(value)
+}
+
+func (snn socialSecurityNumber) ID() string {
+	return string(snn)
+}
+
+func (ss socialSecurityNumber) Country() string {
+	return "United States of America"
+}
+
+type euroUnionIdentifier struct {
+	id      string
+	country string
+}
+
+func NewEuroUnionIdentifier(id, country string) Citizen {
+	return euroUnionIdentifier{
+		id:      id,
+		country: country,
 	}
 }
 
-func (p *Person) FullName() string {
-	return fmt.Sprintf("%s %s", p.firstName, p.lastName)
+func (eui euroUnionIdentifier) ID() string {
+	return eui.id
+}
+
+func (eui euroUnionIdentifier) Country() string {
+	return fmt.Sprintf("EU: %s", eui.country)
+}
+
+type Name struct {
+	first string
+	last  string
+}
+
+func (n Name) FullName() string {
+	return fmt.Sprintf("%s %s", n.first, n.last)
+}
+
+type Employee struct {
+	Name
+}
+
+type Person struct {
+	Name
+	twitterHandler TwitterHandler
+	Citizen
+}
+
+func NewPerson(firstName, lastName string, citizen Citizen) Person {
+	return Person{
+		Name: Name{
+			first: firstName,
+			last:  lastName,
+		},
+		Citizen: citizen,
+	}
 }
 
 func (p *Person) ID() string {
-	return "12345"
+	return fmt.Sprintf("Person's identifier: %s", p.Citizen.ID())
 }
 
 func (p *Person) SetTwitterHandler(handler TwitterHandler) error {

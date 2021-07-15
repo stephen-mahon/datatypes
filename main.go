@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	p := organization.NewPerson("Steve", "Mahon")
+	p := organization.NewPerson("Steve", "Mahon", organization.NewEuroUnionIdentifier("123-456-78", "Ireland"))
 	err := p.SetTwitterHandler("@steve")
 	fmt.Printf("%T\n", organization.TwitterHandler("Test"))
 	if err != nil {
@@ -16,5 +16,6 @@ func main() {
 	fmt.Println(p.TwitterHandler())
 	fmt.Println(p.TwitterHandler().RedirectURL())
 	fmt.Println(p.ID())
+	fmt.Println(p.Country())
 	fmt.Println(p.FullName())
 }
